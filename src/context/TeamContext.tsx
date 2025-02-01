@@ -1,9 +1,9 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface User {
   id: string;
   name: string;
-  teamId: string;
 }
 
 interface Team {
@@ -15,41 +15,42 @@ interface Team {
 interface TeamContextType {
   teams: Team[];
   addTeam: (name: string) => void;
+  removeTeam: (teamId: string) => void;
   addUser: (teamId: string, userName: string) => void;
-  removeUser: (userId: string) => void;
+  removeUser: (teamId: string, userId: string) => void;
 }
 
 const TeamContext = createContext<TeamContextType | undefined>(undefined);
 
-export const TeamProvider = ({ children }: { children: ReactNode }) => {
+export const TeamProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [teams, setTeams] = useState<Team[]>([]);
 
   const addTeam = (name: string) => {
-    const newTeam: Team = { id: crypto.randomUUID(), name, users: [] };
-    setTeams((prev) => [...prev, newTeam]);
+    setTeams([...teams, { id: uuidv4(), name, users: [] }]);
+  };
+
+  const removeTeam = (teamId: string) => {
+    setTeams(teams.filter((team) => team.id !== teamId));
   };
 
   const addUser = (teamId: string, userName: string) => {
-    setTeams((prev) =>
-      prev.map((team) =>
-        team.id === teamId
-          ? { ...team, users: [...team.users, { id: crypto.randomUUID(), name: userName, teamId }] }
-          : team
+    setTeams((prevTeams) =>
+      prevTeams.map((team) =>
+        team.id === teamId ? { ...team, users: [...team.users, { id: uuidv4(), name: userName }] } : team
       )
     );
   };
 
-  const removeUser = (userId: string) => {
-    setTeams((prev) =>
-      prev.map((team) => ({
-        ...team,
-        users: team.users.filter((user) => user.id !== userId),
-      }))
+  const removeUser = (teamId: string, userId: string) => {
+    setTeams((prevTeams) =>
+      prevTeams.map((team) =>
+        team.id === teamId ? { ...team, users: team.users.filter((user) => user.id !== userId) } : team
+      )
     );
   };
 
   return (
-    <TeamContext.Provider value={{ teams, addTeam, addUser, removeUser }}>
+    <TeamContext.Provider value={{ teams, addTeam, removeTeam, addUser, removeUser }}>
       {children}
     </TeamContext.Provider>
   );
@@ -57,6 +58,8 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
 
 export const useTeamContext = () => {
   const context = useContext(TeamContext);
-  if (!context) throw new Error("useTeamContext must be used within a TeamProvider");
+  if (!context) {
+    throw new Error("useTeamContext must be used within a TeamProvider");
+  }
   return context;
 };

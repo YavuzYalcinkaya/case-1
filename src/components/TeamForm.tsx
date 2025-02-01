@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useTeamContext } from "../context/TeamContext";
+import { Card, Button } from "../styled";
+import TextField from "@mui/material/TextField";
 
 const TeamForm = () => {
-  const { addTeam } = useTeamContext();
+  const { addTeam, teams } = useTeamContext();
   const [teamName, setTeamName] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -14,10 +16,25 @@ const TeamForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" value={teamName} onChange={(e) => setTeamName(e.target.value)} placeholder="Ekip Adı" />
-      <button type="submit">Ekip Ekle</button>
-    </form>
+    <Card>
+      <h2>Ekip Yönetimi</h2>
+      <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px" }}>
+        <TextField
+          label="Ekip Adı"
+          value={teamName}
+          onChange={(e) => setTeamName(e.target.value)}
+          variant="outlined"
+        />
+        <Button type="submit">Ekle</Button>
+      </form>
+
+      <h3>Mevcut Ekipler:</h3>
+      <ul>
+        {teams.map((team) => (
+          <li key={team.id}>{team.name}</li>
+        ))}
+      </ul>
+    </Card>
   );
 };
 
