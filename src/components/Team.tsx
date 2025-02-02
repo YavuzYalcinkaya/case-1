@@ -13,6 +13,7 @@ import {
   Typography,
   Divider,
   IconButton,
+  Pagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -22,6 +23,15 @@ const Team = ({ teamId, name }: { teamId: string; name: string }) => {
   const { removeTeam, removeUser, teams } = useTeamContext();
   const [showUsers, setShowUsers] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(
+    teams.flatMap((team) => team.users).length / itemsPerPage
+  );
+  const paginatedUsers = teams
+    .flatMap((team) => team.users)
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const team = teams.find((t) => t.id === teamId);
 
@@ -36,12 +46,18 @@ const Team = ({ teamId, name }: { teamId: string; name: string }) => {
   const handleDeleteSelectedUsers = () => {
     selectedUsers.forEach((userId) => removeUser(teamId, userId));
     setSelectedUsers([]);
+    setCurrentPage(1);
   };
 
   return (
     <Card sx={{ width: "100%", mx: "auto", my: 2 }}>
       <CardContent>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Box
+          flexDirection={{ xs: "column", sm: "row" }}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Typography variant="h5">{name} Ekibi</Typography>
           <Box>
             <IconButton
@@ -64,18 +80,39 @@ const Team = ({ teamId, name }: { teamId: string; name: string }) => {
             </Typography>
 
             {team?.users.length ? (
-              <List>
-                {team.users.map((user) => (
-                  <ListItem key={user.id}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={selectedUsers.includes(user.id)}
-                          onChange={() => handleUserSelect(user.id)}
-                        />
-                      }
-                      label={user.name}
-                    />
+              <List
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, // Mobilde 1 sütun, desktop'ta 2 sütun
+                  gap: 2,
+                  width: "100%",
+                }}
+              >
+                {paginatedUsers.map((user) => (
+                  <ListItem
+                    key={user.id}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      justifyContent: "space-between",
+                      border: "1px solid #ddd",
+                      borderRadius: "8px",
+                      padding: "10px",
+                      background: "#f9f9f9",
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={selectedUsers.includes(user.id)}
+                            onChange={() => handleUserSelect(user.id)}
+                          />
+                        }
+                        label={user.name}
+                      />
+                    </Box>
                   </ListItem>
                 ))}
               </List>
@@ -100,6 +137,14 @@ const Team = ({ teamId, name }: { teamId: string; name: string }) => {
           </Button>
         </CardActions>
       )}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={(_, value) => setCurrentPage(value)}
+          color="primary"
+        />
+      </Box>
     </Card>
   );
 };
