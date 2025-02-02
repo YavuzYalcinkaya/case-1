@@ -10,7 +10,7 @@ import {
   Legend,
   Cell,
 } from "recharts";
-import { useTeamContext } from "../context/TeamContext";
+import { useTeamContext } from "../useTeamContext";
 import { Box, Typography } from "@mui/material";
 
 const colors = ["#8884d8", "#82ca9d", "#ff7300", "#ff6f61", "#00c49f"];

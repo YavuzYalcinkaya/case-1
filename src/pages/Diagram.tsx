@@ -7,7 +7,7 @@ import {
   Edge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useTeamContext } from "../context/TeamContext";
+import { useTeamContext } from "../useTeamContext";
 
 const Diagram = () => {
   const { teams } = useTeamContext();

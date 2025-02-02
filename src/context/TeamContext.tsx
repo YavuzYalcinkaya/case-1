@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 interface User {
@@ -56,10 +56,4 @@ export const TeamProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useTeamContext = () => {
-  const context = useContext(TeamContext);
-  if (!context) {
-    throw new Error("useTeamContext must be used within a TeamProvider");
-  }
-  return context;
-};
+export default TeamContext;

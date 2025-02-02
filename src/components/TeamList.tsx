@@ -1,4 +1,4 @@
-import { useTeamContext } from "../context/TeamContext";
+import { useTeamContext } from "../useTeamContext";
 import Team from "./Team";
 import TeamForm from "./TeamForm";
 import UserForm from "./UserForm";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTeamContext } from "../context/TeamContext";
+import { useTeamContext } from "../useTeamContext";
 import { Card, AddButton } from "../styled";
 import {
   Button,
