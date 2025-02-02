@@ -13,7 +13,7 @@ export const Card = styled.div`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
-export const Button = styled.button`
+export const AddButton = styled.button`
   background: #4F46E5;
   color: white;
   border: none;

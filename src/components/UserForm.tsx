@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useTeamContext } from "../context/TeamContext";
-import { Card, Button } from "../styled";
+import { Card, AddButton } from "../styled";
 import {
+  Button,
   TextField,
   Select,
   MenuItem,
@@ -11,6 +12,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const UserForm = () => {
   const { teams, addUser, removeUser } = useTeamContext();
@@ -74,7 +76,7 @@ const UserForm = () => {
           fullWidth
         />
 
-        <Button type="submit">Ekle</Button>
+        <AddButton type="submit">Ekle</AddButton>
       </Box>
 
       {/* Kullanıcı Listesi */}
@@ -106,7 +108,9 @@ const UserForm = () => {
           {selectedUsers.length > 0 && (
             <Button
               onClick={handleBulkDelete}
-              style={{ background: "#E53E3E", marginTop: "10px" }}
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
             >
               Seçilenleri Sil
             </Button>

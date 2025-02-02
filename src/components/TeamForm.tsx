@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useTeamContext } from "../context/TeamContext";
-import { Card, Button } from "../styled";
+import { Card, AddButton } from "../styled";
 import {
+  Button,
   TextField,
   Box,
   List,
@@ -9,6 +10,7 @@ import {
   Checkbox,
   Typography,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const TeamForm = () => {
   const { addTeam, removeTeam, teams } = useTeamContext();
@@ -38,7 +40,7 @@ const TeamForm = () => {
 
   return (
     <Card>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" color="secondary" gutterBottom>
         Ekip Yönetimi
       </Typography>
 
@@ -51,13 +53,13 @@ const TeamForm = () => {
           variant="outlined"
           fullWidth
         />
-        <Button type="submit">Ekle</Button>
+        <AddButton type="submit">Ekle</AddButton>
       </Box>
 
       {/* Mevcut Ekipler Listesi */}
       {teams.length > 0 && (
         <>
-          <Typography variant="h6" sx={{ marginTop: 2 }}>
+          <Typography variant="h6" color="secondary" sx={{ marginTop: 2 }}>
             Mevcut Ekipler:
           </Typography>
           <List>
@@ -78,8 +80,10 @@ const TeamForm = () => {
           {/* Seçili Ekipleri Sil Butonu */}
           {selectedTeams.length > 0 && (
             <Button
+              variant="contained"
+              color="error"
               onClick={handleBulkDelete}
-              style={{ background: "#E53E3E", marginTop: "10px" }}
+              startIcon={<DeleteIcon />}
             >
               Seçilenleri Sil
             </Button>
