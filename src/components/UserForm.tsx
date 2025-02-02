@@ -12,6 +12,7 @@ import {
   Typography,
   Box,
   FormHelperText,
+  Pagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -26,6 +27,8 @@ const UserForm = () => {
   const [errorMessageUsers, setErrorMessageUsers] = useState<string | null>(
     null
   );
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 10;
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -43,6 +46,7 @@ const UserForm = () => {
     if (userName.trim() && selectedTeam) {
       addUser(selectedTeam, userName);
       setUserName("");
+      setCurrentPage(1);
     }
   };
 
@@ -57,7 +61,15 @@ const UserForm = () => {
   const handleBulkDelete = () => {
     selectedUsers.forEach(({ teamId, userId }) => removeUser(teamId, userId));
     setSelectedUsers([]);
+    setCurrentPage(1);
   };
+
+  const totalPages = Math.ceil(
+    teams.flatMap((team) => team.users).length / itemsPerPage
+  );
+  const paginatedUsers = teams
+    .flatMap((team) => team.users)
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <Card>
@@ -66,7 +78,13 @@ const UserForm = () => {
       </Typography>
 
       {/* Kullanıcı Ekleme Formu */}
-      <Box component="form" onSubmit={handleSubmit} display="flex" gap="10px">
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        display="flex"
+        gap="10px"
+        flexDirection={{ xs: "column", sm: "row" }}
+      >
         <Select
           value={selectedTeam}
           onChange={(e) => setSelectedTeam(e.target.value)}
@@ -104,36 +122,69 @@ const UserForm = () => {
           <Typography variant="h6" sx={{ marginTop: 2 }}>
             Mevcut Kullanıcılar:
           </Typography>
-          <List>
+          <List
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, // Mobilde 1 sütun, desktop'ta 2 sütun
+              gap: 2,
+              width: "100%",
+            }}
+          >
             {teams.flatMap((team) =>
-              team.users.map((user) => (
+              paginatedUsers.map((user) => (
                 <ListItem
                   key={user.id}
-                  sx={{ display: "flex", alignItems: "center" }}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    padding: "10px",
+                    background: "#f9f9f9",
+                  }}
                 >
-                  <Checkbox
-                    checked={selectedUsers.some((u) => u.userId === user.id)}
-                    onChange={() => handleCheckboxChange(team.id, user.id)}
-                  />
-                  <Typography>
-                    {user.name} ({team.name})
-                  </Typography>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Checkbox
+                      checked={selectedUsers.some((u) => u.userId === user.id)}
+                      onChange={() => handleCheckboxChange(team.id, user.id)}
+                    />
+                    <Typography>
+                      {user.name} ({team.name})
+                    </Typography>
+                  </Box>
                 </ListItem>
               ))
             )}
           </List>
-
-          {/* Seçili Kullanıcıları Sil Butonu */}
-          {selectedUsers.length > 0 && (
-            <Button
-              onClick={handleBulkDelete}
-              variant="contained"
-              color="error"
-              startIcon={<DeleteIcon />}
-            >
-              Seçilenleri Sil
-            </Button>
-          )}
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems="center"
+            gap={2}
+            sx={{ marginTop: 2 }}
+          >
+            {selectedUsers.length > 0 && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleBulkDelete}
+                startIcon={<DeleteIcon />}
+              >
+                Seçilenleri Sil
+              </Button>
+            )}
+            <Box sx={{ marginLeft: "auto" }}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={(_, value) => setCurrentPage(value)}
+                color="primary"
+              />
+            </Box>
+          </Box>
         </>
       )}
     </Card>
