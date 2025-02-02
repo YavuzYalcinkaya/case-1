@@ -55,6 +55,7 @@ const TeamForm = () => {
         Ekip Yönetimi
       </Typography>
 
+      {/* Ekip Ekleme Formu */}
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -77,7 +78,14 @@ const TeamForm = () => {
           <Typography variant="h6" color="secondary" sx={{ marginTop: 2 }}>
             Mevcut Ekipler:
           </Typography>
-          <List sx={{ width: "100%" }}>
+          <List
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, // Mobilde 1 sütun, desktop'ta 2 sütun
+              gap: 2,
+              width: "100%",
+            }}
+          >
             {paginatedTeams.map((team) => (
               <ListItem
                 key={team.id}
@@ -86,6 +94,10 @@ const TeamForm = () => {
                   alignItems: "center",
                   flexWrap: "wrap",
                   justifyContent: "space-between",
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  background: "#f9f9f9",
                 }}
               >
                 <Box display="flex" alignItems="center" gap={1}>
@@ -98,7 +110,6 @@ const TeamForm = () => {
               </ListItem>
             ))}
           </List>
-
           <Box
             display="flex"
             flexDirection={{ xs: "column", sm: "row" }}
@@ -117,13 +128,14 @@ const TeamForm = () => {
                 Seçilenleri Sil
               </Button>
             )}
-
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={(_, value) => setCurrentPage(value)}
-              color="primary"
-            />
+            <Box sx={{ marginLeft: "auto" }}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={(_, value) => setCurrentPage(value)}
+                color="primary"
+              />
+            </Box>
           </Box>
         </>
       )}
