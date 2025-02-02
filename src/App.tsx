@@ -6,6 +6,7 @@ import TeamList from "./components/TeamList";
 import { ThemeProvider } from "styled-components";
 import theme from "./theme";
 import { CssBaseline } from "@mui/material";
+import Charts from "./pages/Charts";
 
 const App = () => (
   <ThemeProvider theme={theme}>
@@ -16,6 +17,7 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<TeamList />} />
             <Route path="/diagram" element={<Diagram />} />
+            <Route path="/charts" element={<Charts />} />
           </Route>
         </Routes>
       </Router>
