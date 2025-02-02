@@ -11,19 +11,35 @@ import {
   Checkbox,
   Typography,
   Box,
+  FormHelperText,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const UserForm = () => {
   const { teams, addUser, removeUser } = useTeamContext();
-  const [userName, setUserName] = useState("");
-  const [selectedTeam, setSelectedTeam] = useState("");
+  const [userName, setUserName] = useState<string>("");
+  const [selectedTeam, setSelectedTeam] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<
     { teamId: string; userId: string }[]
   >([]);
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessageUsers, setErrorMessageUsers] = useState<string | null>(
+    null
+  );
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    setErrorMessage(null);
+    setErrorMessageUsers(null);
+
+    if (!selectedTeam) {
+      setErrorMessage("Ekip seçiniz!");
+      return;
+    }
+    if (!userName) {
+      setErrorMessageUsers("Kullanıcı seçiniz!");
+      return;
+    }
     if (userName.trim() && selectedTeam) {
       addUser(selectedTeam, userName);
       setUserName("");
@@ -67,6 +83,7 @@ const UserForm = () => {
             </MenuItem>
           ))}
         </Select>
+        {errorMessage && <FormHelperText error>{errorMessage}</FormHelperText>}
 
         <TextField
           label="Kullanıcı Adı"
@@ -75,7 +92,9 @@ const UserForm = () => {
           variant="outlined"
           fullWidth
         />
-
+        {errorMessageUsers && (
+          <FormHelperText error>{errorMessageUsers}</FormHelperText>
+        )}
         <AddButton type="submit">Ekle</AddButton>
       </Box>
 
